@@ -1,5 +1,8 @@
 {
-    "name": "doctrine/couchdb-odm",
+    "name": "powerhamster/couchdb-odm-history",
+    "replace": {
+        "doctrine/couchdb-odm": "self.version",
+    },
     "type": "library",
     "description": "CouchDB Document Object Mapper",
     "keywords": ["persistence", "couchdb"],
@@ -8,6 +11,7 @@
     "authors": [
         {"name": "Benjamin Eberlei", "email": "kontakt@beberlei.de"},
         {"name": "Lukas Kahwe Smith", "email": "smith@pooteeweet.org"}
+        {"name": "Thomas Rothe", "email": "th.rothe@gmail.com"}
     ],
     "require": {
         "php": ">=5.3.2",
