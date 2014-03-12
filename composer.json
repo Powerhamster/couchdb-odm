@@ -1,7 +1,7 @@
 {
     "name": "powerhamster/couchdb-odm-history",
     "replace": {
-        "doctrine/couchdb-odm": "self.version",
+        "doctrine/couchdb-odm": "self.version"
     },
     "type": "library",
     "description": "CouchDB Document Object Mapper",
