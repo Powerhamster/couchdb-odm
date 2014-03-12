@@ -10,7 +10,7 @@
     "license": "MIT",
     "authors": [
         {"name": "Benjamin Eberlei", "email": "kontakt@beberlei.de"},
-        {"name": "Lukas Kahwe Smith", "email": "smith@pooteeweet.org"}
+        {"name": "Lukas Kahwe Smith", "email": "smith@pooteeweet.org"},
         {"name": "Thomas Rothe", "email": "th.rothe@gmail.com"}
     ],
     "require": {
