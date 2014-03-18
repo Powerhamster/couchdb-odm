@@ -35,7 +35,7 @@ class SocketClientTestCase extends \Doctrine\Tests\ODM\CouchDB\CouchDBFunctional
 
     public function testCreateDatabase()
     {
-        $db = new HTTP\SocketClient();
+        $db = $this->createSocketClient();
 
         // Remove maybe existing database
         try {
@@ -59,7 +59,7 @@ class SocketClientTestCase extends \Doctrine\Tests\ODM\CouchDB\CouchDBFunctional
      */
     public function testForErrorOnDatabaseRecreation()
     {
-        $db = new HTTP\SocketClient();
+        $db = $this->createSocketClient();
 
         $response = $db->request( 'PUT', '/' . $this->getTestDatabase() );
         $this->assertTrue(
@@ -81,7 +81,7 @@ class SocketClientTestCase extends \Doctrine\Tests\ODM\CouchDB\CouchDBFunctional
      */
     public function testGetDatabaseInformation()
     {
-        $db = new HTTP\SocketClient();
+        $db = $this->createSocketClient();
 
         $response = $db->request( 'GET', '/' );
 
@@ -100,7 +100,7 @@ class SocketClientTestCase extends \Doctrine\Tests\ODM\CouchDB\CouchDBFunctional
      */
     public function testAddDocumentToDatabase()
     {
-        $db = new HTTP\SocketClient();
+        $db = $this->createSocketClient();
 
         $response = $db->request( 'PUT', '/' . $this->getTestDatabase() . '/123', '{"_id":"123","data":"Foo"}' );
 
@@ -119,7 +119,7 @@ class SocketClientTestCase extends \Doctrine\Tests\ODM\CouchDB\CouchDBFunctional
      */
     public function testGetAllDocsFormDatabase()
     {
-        $db = new HTTP\SocketClient();
+        $db = $this->createSocketClient();
         $db->request( 'PUT', '/' . $this->getTestDatabase() . '/123', '{"_id":"123","data":"Foo"}' );
 
         $response = $db->request( 'GET', '/' . $this->getTestDatabase() . '/_all_docs' );
@@ -144,7 +144,7 @@ class SocketClientTestCase extends \Doctrine\Tests\ODM\CouchDB\CouchDBFunctional
      */
     public function testGetSingleDocumentFromDatabase()
     {
-        $db = new HTTP\SocketClient();
+        $db = $this->createSocketClient();
         $db->request( 'PUT', '/' . $this->getTestDatabase() . '/123', '{"_id":"123","data":"Foo"}' );
 
         $response = $db->request( 'GET', '/' . $this->getTestDatabase() . '/123' );
@@ -172,7 +172,7 @@ class SocketClientTestCase extends \Doctrine\Tests\ODM\CouchDB\CouchDBFunctional
      */
     public function testGetUnknownDocumentFromDatabase()
     {
-        $db = new HTTP\SocketClient();
+        $db = $this->createSocketClient();
 
         $response = $db->request( 'GET', '/' . $this->getTestDatabase() . '/not_existant' );
         $this->assertTrue(
@@ -194,7 +194,7 @@ class SocketClientTestCase extends \Doctrine\Tests\ODM\CouchDB\CouchDBFunctional
      */
     public function testGetDocumentFromNotExistantDatabase()
     {
-        $db = new HTTP\SocketClient();
+        $db = $this->createSocketClient();
 
         try
         {
@@ -221,7 +221,7 @@ class SocketClientTestCase extends \Doctrine\Tests\ODM\CouchDB\CouchDBFunctional
      */
     public function testDeleteUnknownDocumentFromDatabase()
     {
-        $db = new HTTP\SocketClient();
+        $db = $this->createSocketClient();
 
         $db->request( 'PUT', '/' . $this->getTestDatabase() );
         $response = $db->request( 'DELETE', '/' . $this->getTestDatabase() . '/not_existant' );
@@ -244,7 +244,7 @@ class SocketClientTestCase extends \Doctrine\Tests\ODM\CouchDB\CouchDBFunctional
      */
     public function testDeleteSingleDocumentFromDatabase()
     {
-        $db = new HTTP\SocketClient();
+        $db = $this->createSocketClient();
         $db->request( 'PUT', '/' . $this->getTestDatabase() . '/123', '{"_id":"123","data":"Foo"}' );
 
         $response = $db->request( 'GET', '/' . $this->getTestDatabase() . '/123' );
@@ -270,7 +270,7 @@ class SocketClientTestCase extends \Doctrine\Tests\ODM\CouchDB\CouchDBFunctional
      */
     public function testDeleteDatabase()
     {
-        $db = new HTTP\SocketClient();
+        $db = $this->createSocketClient();
 
         $response = $db->request( 'DELETE', '/' . $this->getTestDatabase() );
 
@@ -289,7 +289,7 @@ class SocketClientTestCase extends \Doctrine\Tests\ODM\CouchDB\CouchDBFunctional
      */
     public function testArrayResponse()
     {
-        $db = new HTTP\SocketClient();
+        $db = $this->createSocketClient();
 
         $db->request( 'PUT', '/' . $this->getTestDatabase() );
         $response = $db->request( 'GET', '/_all_dbs' );
@@ -310,7 +310,7 @@ class SocketClientTestCase extends \Doctrine\Tests\ODM\CouchDB\CouchDBFunctional
      */
     public function testCloseConnection()
     {
-        $db = new HTTP\SocketClient();
+        $db = $this->createSocketClient();
         $db->setOption( 'keep-alive', false );
 
         $db->request( 'PUT', '/' . $this->getTestDatabase() . '/123', '{"_id":"123","data":"Foo"}' );
@@ -335,7 +335,7 @@ class SocketClientTestCase extends \Doctrine\Tests\ODM\CouchDB\CouchDBFunctional
      */
     public function testKeepAliveConnection()
     {
-        $db = new HTTP\SocketClient();
+        $db = $this->createSocketClient();
         $db->setOption( 'keep-alive', true );
 
         $db->request( 'PUT', '/' . $this->getTestDatabase() . '/123', '{"_id":"123","data":"Foo"}' );
@@ -360,7 +360,7 @@ class SocketClientTestCase extends \Doctrine\Tests\ODM\CouchDB\CouchDBFunctional
      */
     public function testUnknownOption()
     {
-        $db = new HTTP\SocketClient();
+        $db = $this->createSocketClient();
 
         try {
             $db->setOption( 'unknownOption', 42 );
@@ -368,6 +368,15 @@ class SocketClientTestCase extends \Doctrine\Tests\ODM\CouchDB\CouchDBFunctional
         } catch( \InvalidArgumentException $e ) {
             /* Expected */
         }
+    }
+
+    /**
+     * @return HTTP\SocketClient
+     */
+    private function createSocketClient()
+    {
+        $db = new HTTP\SocketClient($GLOBALS['DOCTRINE_COUCHDB_HOST'], $GLOBALS['DOCTRINE_COUCHDB_PORT']);
+        return $db;
     }
 }
 
