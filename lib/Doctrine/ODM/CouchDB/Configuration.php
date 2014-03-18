@@ -65,6 +65,7 @@ class Configuration
         'luceneHandlerName' => false,
         'metadataResolver' => null,
         'autoGenerateProxyClasses' => false,
+        'classMetadataFactoryName' => 'Doctrine\ODM\CouchDB\Mapping\ClassMetadataFactory'
     );
 
     /**
@@ -170,11 +171,17 @@ class Configuration
         return new \Doctrine\ODM\CouchDB\Mapping\Driver\AnnotationDriver($reader, (array) $paths);
     }
 
+    /**
+     * @param MetadataResolver $resolver
+     */
     public function setMetadataResolverImpl(MetadataResolver $resolver)
     {
         $this->attributes['metadataResolver'] = $resolver;
     }
 
+    /**
+     * @return DoctrineResolver
+     */
     public function getMetadataResolverImpl()
     {
         if (!$this->attributes['metadataResolver']) {
@@ -186,7 +193,7 @@ class Configuration
     /**
      * Gets the cache driver implementation that is used for the mapping metadata.
      *
-     * @return Mapping\Driver\Driver
+     * @return MappingDriver
      */
     public function getMetadataDriverImpl()
     {
@@ -261,11 +268,17 @@ class Configuration
         return $this->attributes['proxyNamespace'];
     }
 
+    /**
+     * @param bool $bool
+     */
     public function setAutoGenerateProxyClasses($bool)
     {
         $this->attributes['autoGenerateProxyClasses'] = $bool;
     }
 
+    /**
+     * @return bool
+     */
     public function getAutoGenerateProxyClasses()
     {
         return $this->attributes['autoGenerateProxyClasses'];
@@ -320,11 +333,18 @@ class Configuration
         return $this->attributes['allOrNothingFlush'];
     }
 
+    /**
+     * @param string $handlerName
+     */
     public function setLuceneHandlerName($handlerName = '_fti')
     {
         $this->attributes['luceneHandlerName'] = $handlerName;
     }
 
+    /**
+     * @return string
+     * @throws CouchDBException
+     */
     public function getLuceneHandlerName()
     {
         if (!$this->attributes['luceneHandlerName']) {
@@ -347,10 +367,30 @@ class Configuration
     }
 
     /**
-     * @return void
+     * @param Migrations\DocumentMigration $migration
      */
     public function setMigrations(DocumentMigration $migration)
     {
         $this->attributes['migrations'] = $migration;
+    }
+
+    /**
+     * Set the class metadata factory class name.
+     *
+     * @param string $cmfName
+     */
+    public function setClassMetadataFactoryName($cmfName)
+    {
+        $this->attributes['classMetadataFactoryName'] = $cmfName;
+    }
+
+    /**
+     * Gets the class metadata factory class name.
+     *
+     * @return string
+     */
+    public function getClassMetadataFactoryName()
+    {
+        return $this->attributes['classMetadataFactoryName'];
     }
 }

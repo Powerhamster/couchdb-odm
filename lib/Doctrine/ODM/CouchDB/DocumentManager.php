@@ -76,7 +76,9 @@ class DocumentManager implements ObjectManager
         $this->couchDBClient = $couchClient;
         $this->config = $config ?: new Configuration();
         $this->evm = $evm ?: new EventManager();
-        $this->metadataFactory = new ClassMetadataFactory($this);
+        $metadataFactoryClassName = $this->config->getClassMetadataFactoryName();
+        $this->metadataFactory = new $metadataFactoryClassName();
+        $this->metadataFactory->setDocumentManager($this);
         $this->unitOfWork = new UnitOfWork($this);
         $this->proxyFactory = new Proxy\ProxyFactory($this, $this->config->getProxyDir(), $this->config->getProxyNamespace(), $this->config->getAutoGenerateProxyClasses());
     }

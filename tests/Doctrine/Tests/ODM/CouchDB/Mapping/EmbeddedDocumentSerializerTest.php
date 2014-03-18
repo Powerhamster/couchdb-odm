@@ -17,10 +17,12 @@ use Doctrine\ODM\CouchDB\Mapping\MetadataResolver\DoctrineResolver;
 class EmbeddedDocumentSerializerTest extends \Doctrine\Tests\ODM\CouchDB\CouchDBFunctionalTestCase
 {
     private $serializer;
+
     public function setUp()
     {
         $dm = $this->createDocumentManager();
-        $this->metadataFactory = new ClassMetadataFactory($dm);
+        $this->metadataFactory = new ClassMetadataFactory();
+        $this->metadataFactory->setDocumentManager($dm);
         $resolver = new DoctrineResolver();
         $this->serializer = new EmbeddedDocumentSerializer($this->metadataFactory, $resolver);
 

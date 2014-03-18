@@ -17,19 +17,24 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\ODM\CouchDB;
+namespace Doctrine\ODM\CouchDb\Event;
 
-final class Event
+use Doctrine\Common\Persistence\Event\LoadClassMetadataEventArgs as BaseLoadClassMetadataEventArgs;
+
+/**
+ * Class that holds event arguments for a loadMetadata event.
+ *
+ * @since 1.0
+ */
+class LoadClassMetadataEventArgs extends BaseLoadClassMetadataEventArgs
 {
-    const loadClassMetadata = 'loadClassMetadata';
-    const onConflict = 'onConflict';
-    const onFlush = 'onFlush';
-    const prePersist = 'prePersist';
-    const preRemove = 'preRemove';
-    const preUpdate = 'preUpdate';
-    const postRemove = 'postRemove';
-    const postUpdate = 'postUpdate';
-    const postLoad = 'postLoad';
-
-    private function __construct() {}
+    /**
+     * Retrieves the associated DocumentManager.
+     *
+     * @return \Doctrine\ODM\CouchDB\DocumentManager
+     */
+    public function getDocumentManager()
+    {
+        return $this->getObjectManager();
+    }
 }

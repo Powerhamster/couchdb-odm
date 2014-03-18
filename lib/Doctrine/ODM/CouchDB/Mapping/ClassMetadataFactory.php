@@ -19,14 +19,13 @@
 
 namespace Doctrine\ODM\CouchDB\Mapping;
 
-use Doctrine\ODM\CouchDB\DocumentManager,
-    Doctrine\ODM\CouchDB\CouchDBException,
-    Doctrine\ODM\CouchDB\Mapping\ClassMetadata,
-    Doctrine\Common\Persistence\Mapping\Driver\MappingDriver,
-    Doctrine\Common\Persistence\Mapping\ClassMetadata as ClassMetadataInterface,
-    Doctrine\Common\Persistence\Mapping\ReflectionService,
-    Doctrine\Common\Persistence\Mapping\RuntimeReflectionService,
-    Doctrine\Common\Persistence\Mapping\AbstractClassMetadataFactory;
+use Doctrine\Common\EventManager;
+use Doctrine\ODM\CouchDB\DocumentManager;
+use Doctrine\Common\Persistence\Mapping\Driver\MappingDriver;
+use Doctrine\Common\Persistence\Mapping\ClassMetadata as ClassMetadataInterface;
+use Doctrine\Common\Persistence\Mapping\ReflectionService;
+use Doctrine\Common\Persistence\Mapping\AbstractClassMetadataFactory;
+use Doctrine\ODM\CouchDB\Event;
 
 /**
  * The ClassMetadataFactory is used to create ClassMetadata objects that contain all the
@@ -54,20 +53,10 @@ class ClassMetadataFactory extends AbstractClassMetadataFactory
     private $driver;
 
     /**
-     * Creates a new factory instance that uses the given DocumentManager instance.
-     *
-     * @param DocumentManager $dm The DocumentManager instance
+     * @var EventManager
      */
-    public function __construct(DocumentManager $dm)
-    {
-        $this->dm = $dm;
-        $config = $this->dm->getConfiguration();
-        $this->setCacheDriver($config->getMetadataCacheImpl());
-        $this->driver = $config->getMetadataDriverImpl();
-        if (!$this->driver) {
-            throw new \RuntimeException('No metadata driver was configured.');
-        }
-    }
+    private $evm;
+
 
     /**
      * {@inheritdoc}
@@ -88,6 +77,11 @@ class ClassMetadataFactory extends AbstractClassMetadataFactory
         }
 
         $this->validateMapping($class);
+
+        if ($this->evm->hasListeners(Event::loadClassMetadata)) {
+            $eventArgs = new \Doctrine\ODM\CouchDB\Event\LoadClassMetadataEventArgs($class, $this->dm);
+            $this->evm->dispatchEvent(Event::loadClassMetadata, $eventArgs);
+        }
     }
 
     /**
@@ -166,6 +160,8 @@ class ClassMetadataFactory extends AbstractClassMetadataFactory
      * Gets the class metadata descriptor for a class.
      *
      * @param string $className The name of the class.
+     *
+     * @throws MappingException
      * @return ClassMetadata
      */
     public function getMetadataFor($className)
@@ -184,6 +180,9 @@ class ClassMetadataFactory extends AbstractClassMetadataFactory
      * is still not loaded.
      *
      * @param string $className The name of the class for which the metadata should get loaded.
+     *
+     * @throws MappingException
+     * @return array
      */
     protected function loadMetadata($className)
     {
@@ -217,6 +216,13 @@ class ClassMetadataFactory extends AbstractClassMetadataFactory
      */
     protected function initialize()
     {
+        $config = $this->dm->getConfiguration();
+        $this->setCacheDriver($config->getMetadataCacheImpl());
+        $this->driver = $config->getMetadataDriverImpl();
+        $this->evm = $this->dm->getEventManager();
+        if (!$this->driver) {
+            throw new \RuntimeException('No metadata driver was configured.');
+        }
         $this->initialized = true;
     }
 
@@ -243,4 +249,13 @@ class ClassMetadataFactory extends AbstractClassMetadataFactory
     {
         return isset($class->isMappedSuperclass) && $class->isMappedSuperclass === false;
     }
+
+    /**
+     * @param \Doctrine\ODM\CouchDB\DocumentManager $dm
+     */
+    public function setDocumentManager($dm)
+    {
+        $this->dm = $dm;
+    }
+
 }
