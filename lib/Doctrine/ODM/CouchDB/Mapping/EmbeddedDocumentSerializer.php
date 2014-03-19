@@ -82,10 +82,13 @@ class EmbeddedDocumentSerializer
             }
 
             $data = $this->metadataResolver->createDefaultDocumentStruct($embeddedClass);
-            foreach($embeddedClass->reflFields AS $fieldName => $reflProperty) {
+            foreach ($embeddedClass->reflFields as $fieldName => $reflProperty) {
                 $value = $reflProperty->getValue($embeddedValue);
                 $fieldMapping = $embeddedClass->fieldMappings[$fieldName];
-
+                // skip not saved fields
+                if (isset($fieldMapping['notSaved']) && $fieldMapping['notSaved'] === true) {
+                    continue;
+                }
                 if ($value === null) {
                     continue;
                 } else if (isset($fieldMapping['embedded'])) {
