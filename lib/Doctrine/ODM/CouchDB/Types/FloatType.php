@@ -4,7 +4,7 @@ namespace Doctrine\ODM\CouchDB\Types;
 
 class FloatType extends Type
 {
-    public function convertToCouchDBValue($value)
+    public function convertToDatabaseValue($value)
     {
         return (float)$value;
     }

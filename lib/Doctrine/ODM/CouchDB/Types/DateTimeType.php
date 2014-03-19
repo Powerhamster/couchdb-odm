@@ -6,7 +6,7 @@ use DateTime;
 
 class DateTimeType extends Type
 {
-    public function convertToCouchDBValue($value)
+    public function convertToDatabaseValue($value)
     {
         return $value->format('Y-m-d H:i:s.u');
     }

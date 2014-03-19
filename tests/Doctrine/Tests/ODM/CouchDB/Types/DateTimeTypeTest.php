@@ -6,6 +6,9 @@ use Doctrine\ODM\CouchDB\Types\Type;
 
 class DateTimeTypeTest extends \Doctrine\Tests\ODM\CouchDB\CouchDBFunctionalTestCase
 {
+    /**
+     * @var Type
+     */
     private $type;
 
     public function setUp()
@@ -32,6 +35,6 @@ class DateTimeTypeTest extends \Doctrine\Tests\ODM\CouchDB\CouchDBFunctionalTest
      */
     public function testConvertRoundtrip($expected, $value)
     {
-        $this->assertEquals($expected, $this->type->convertToCouchDBValue($this->type->convertToPHPValue($value)));
+        $this->assertEquals($expected, $this->type->convertToDatabaseValue($this->type->convertToPHPValue($value)));
     }
 }

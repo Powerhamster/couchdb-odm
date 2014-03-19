@@ -1062,7 +1062,7 @@ class UnitOfWork
 
                     } else if ($fieldValue !== null) {
                         $fieldValue = Type::getType($class->fieldMappings[$fieldName]['type'])
-                            ->convertToCouchDBValue($fieldValue);
+                            ->convertToDatabaseValue($fieldValue);
                     }
 
                     if (isset($class->fieldMappings[$fieldName]['id'])) {

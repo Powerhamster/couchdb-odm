@@ -4,7 +4,7 @@ namespace Doctrine\ODM\CouchDB\Types;
 
 class StringType extends Type
 {
-    public function convertToCouchDBValue($value)
+    public function convertToDatabaseValue($value)
     {
         return (string)$value;
     }

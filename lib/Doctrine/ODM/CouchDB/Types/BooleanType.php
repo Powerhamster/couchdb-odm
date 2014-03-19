@@ -4,7 +4,7 @@ namespace Doctrine\ODM\CouchDB\Types;
 
 class BooleanType extends Type
 {
-    public function convertToCouchDBValue($value)
+    public function convertToDatabaseValue($value)
     {
         return (bool) $value;
     }

@@ -92,7 +92,7 @@ class EmbeddedDocumentSerializer
                     $data[$fieldMapping['jsonName']] = $this->serializeEmbeddedDocument($value, $fieldMapping);
                 } else {
                     $data[$fieldMapping['jsonName']] = Type::getType($fieldMapping['type'])
-                        ->convertToCouchDBValue($value);
+                        ->convertToDatabaseValue($value);
                 }
             }
         }

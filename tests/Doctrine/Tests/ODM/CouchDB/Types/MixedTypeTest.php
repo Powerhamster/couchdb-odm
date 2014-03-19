@@ -6,6 +6,9 @@ use Doctrine\ODM\CouchDB\Types\Type;
 
 class MixedTypeTest extends \Doctrine\Tests\ODM\CouchDB\CouchDBFunctionalTestCase
 {
+    /**
+     * @var Type
+     */
     private $type;
 
     public function setUp()
@@ -38,6 +41,6 @@ class MixedTypeTest extends \Doctrine\Tests\ODM\CouchDB\CouchDBFunctionalTestCas
      */
     public function testConvertRoundtrip($expected, $value)
     {
-        $this->assertEquals($expected, $this->type->convertToCouchDBValue($this->type->convertToPHPValue($value)));
+        $this->assertEquals($expected, $this->type->convertToDatabaseValue($this->type->convertToPHPValue($value)));
     }
 }

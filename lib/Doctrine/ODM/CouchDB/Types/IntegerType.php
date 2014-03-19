@@ -4,7 +4,7 @@ namespace Doctrine\ODM\CouchDB\Types;
 
 class IntegerType extends Type
 {
-    public function convertToCouchDBValue($value)
+    public function convertToDatabaseValue($value)
     {
         return (int)$value;
     }

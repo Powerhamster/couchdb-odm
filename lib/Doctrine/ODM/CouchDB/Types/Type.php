@@ -13,6 +13,12 @@ abstract class Type
     const OBJECT = 'object';
     const STRING = 'string';
 
+    const HISTORY_BOOLEAN = 'historyboolean';
+    const HISTORY_DATE = 'historydate';
+    const HISTORY_FLOAT = 'historyfloat';
+    const HISTORY_INT = 'historyint';
+    const HISTORY_STRING = 'historystring';
+
     /** Map of already instantiated type objects. One instance per type (flyweight). */
     private static $_typeObjects = array();
 
@@ -24,6 +30,12 @@ abstract class Type
         self::STRING => 'Doctrine\ODM\CouchDB\Types\StringType',
         self::FLOAT => 'Doctrine\ODM\CouchDB\Types\FloatType',
         self::DATETIME => 'Doctrine\ODM\CouchDB\Types\DateTimeType',
+
+        self::HISTORY_BOOLEAN => 'Doctrine\ODM\CouchDB\Types\History\HistoryBooleanType',
+        self::HISTORY_DATE => 'Doctrine\ODM\CouchDB\Types\History\HistoryDateTimeType',
+        self::HISTORY_FLOAT => 'Doctrine\ODM\CouchDB\Types\History\HistoryFloatType',
+        self::HISTORY_INT => 'Doctrine\ODM\CouchDB\Types\History\HistoryIntType',
+        self::HISTORY_STRING => 'Doctrine\ODM\CouchDB\Types\History\HistoryStringType',
     );
 
     protected function __construct() {}
@@ -32,7 +44,7 @@ abstract class Type
      * @param mixed $value
      * @return mixed
      */
-    abstract public function convertToCouchDBValue($value);
+    abstract public function convertToDatabaseValue($value);
 
     /**
      * @param mixed $value
@@ -122,5 +134,15 @@ abstract class Type
     {
         $e = explode('\\', get_class($this));
         return str_replace('Type', '', end($e));
+    }
+
+    public static function convertPHPToDatabaseValue($value)
+    {
+        /** @var Type $type */
+        $type = new static();
+        if ($type !== null) {
+            return $type->convertToDatabaseValue($value);
+        }
+        return $value;
     }
 }

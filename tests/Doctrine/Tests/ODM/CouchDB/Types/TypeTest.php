@@ -6,16 +6,16 @@ use Doctrine\ODM\CouchDB\Types\Type;
 
 class TypeTest extends \Doctrine\Tests\ODM\CouchDB\CouchDBTestCase
 {
-    public function testOverwriteNonExistantType()
+    public function testOverwriteNonExistentType()
     {
-        $this->setExpectedException("Doctrine\ODM\CouchDB\Types\TypeException");
+        $this->setExpectedException("Doctrine\\ODM\\CouchDB\\Types\\TypeException");
 
         Type::overrideType('foobar', 'Doctrine\ODM\CouchDB\Types\MixedType');
     }
 
     public function testAddExistantType()
     {
-        $this->setExpectedException("Doctrine\ODM\CouchDB\Types\TypeException");
+        $this->setExpectedException("Doctrine\\ODM\\CouchDB\\Types\\TypeException");
 
         Type::addType('mixed', 'Doctrine\ODM\CouchDB\Types\MixedType');
     }

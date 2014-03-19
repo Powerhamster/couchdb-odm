@@ -4,7 +4,7 @@ namespace Doctrine\ODM\CouchDB\Types;
 
 class MixedType extends Type
 {
-    public function convertToCouchDBValue($value)
+    public function convertToDatabaseValue($value)
     {
         return $value;
     }
