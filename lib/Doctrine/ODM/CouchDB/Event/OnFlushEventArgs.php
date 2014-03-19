@@ -20,7 +20,10 @@
 
 namespace Doctrine\ODM\CouchDB\Event;
 
-class OnFlushEventArgs extends \Doctrine\Common\EventArgs
+
+use Doctrine\Common\Persistence\Event\ManagerEventArgs;
+
+class OnFlushEventArgs extends ManagerEventArgs
 {
     private $documentManager;
 
