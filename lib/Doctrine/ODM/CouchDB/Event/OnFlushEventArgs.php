@@ -25,18 +25,11 @@ use Doctrine\Common\Persistence\Event\ManagerEventArgs;
 
 class OnFlushEventArgs extends ManagerEventArgs
 {
-    private $documentManager;
-
-    public function __construct($documentManager)
-    {
-        $this->documentManager = $documentManager;
-    }
-
     /**
      * @return \Doctrine\ODM\CouchDB\DocumentManager
      */
     public function getDocumentManager()
     {
-        return $this->documentManager;
+        return $this->getObjectManager();
     }
 }

@@ -20,24 +20,17 @@
 
 namespace Doctrine\ODM\CouchDB\Event;
 
-class LifecycleEventArgs extends \Doctrine\Common\EventArgs
+use Doctrine\Common\Persistence\Event\LifecycleEventArgs as BaseLifecycleEventArgs;
+
+class LifecycleEventArgs extends BaseLifecycleEventArgs
 {
-    private $document;
-
-    private $documentManager;
-
-    function __construct($document, $documentManager)
-    {
-        $this->document = $document;
-        $this->documentManager = $documentManager;
-    }
 
     /**
      * @return object
      */
     public function getDocument()
     {
-        return $this->document;
+        return $this->getObject();
     }
 
     /**
@@ -45,6 +38,6 @@ class LifecycleEventArgs extends \Doctrine\Common\EventArgs
      */
     public function getDocumentManager()
     {
-        return $this->documentManager;
+        return $this->getObjectManager();
     }
 }
