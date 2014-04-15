@@ -29,15 +29,23 @@ use Doctrine\ODM\CouchDb\Types\StringType;
  */
 class HistoryStringType extends StringType
 {
-    public function convertToDatabaseValue($values)
+    /**
+     * @param string $value
+     *
+     * @return string
+     */
+    public function convertToDatabaseValue($value)
     {
-        foreach ($values as &$value) {
-            $value['validFrom'] = DateTimeType::convertPHPToDatabaseValue($value['validFrom']);
-            $value['value'] = parent::convertToDatabaseValue($value['value']);
-            if (isset($value['validUntil'])) {
-                $value['validUntil'] = DateTimeType::convertPHPToDatabaseValue($value['validUntil']);
-            }
-        }
-        return (array) $values;
+        return $value;
+    }
+
+    /**
+     * @param string $value
+     *
+     * @return string
+     */
+    public function realConvertToDatabaseValue($value)
+    {
+        return parent::convertToDatabaseValue($value);
     }
 }

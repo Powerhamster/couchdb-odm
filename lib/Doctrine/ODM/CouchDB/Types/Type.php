@@ -18,6 +18,7 @@ abstract class Type
     const HISTORY_FLOAT = 'historyfloat';
     const HISTORY_INT = 'historyint';
     const HISTORY_STRING = 'historystring';
+    const HISTORY_MIXED = 'historymixed';
 
     /** Map of already instantiated type objects. One instance per type (flyweight). */
     private static $_typeObjects = array();
@@ -36,6 +37,8 @@ abstract class Type
         self::HISTORY_FLOAT => 'Doctrine\ODM\CouchDB\Types\History\HistoryFloatType',
         self::HISTORY_INT => 'Doctrine\ODM\CouchDB\Types\History\HistoryIntType',
         self::HISTORY_STRING => 'Doctrine\ODM\CouchDB\Types\History\HistoryStringType',
+        self::HISTORY_MIXED => 'Doctrine\ODM\CouchDB\Types\History\HistoryMixedType',
+
     );
 
     protected function __construct() {}

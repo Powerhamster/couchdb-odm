@@ -17,7 +17,7 @@
  * <http://www.doctrine-project.org>.
  */
 
-namespace Doctrine\ODM\MongoDB\Types\History;
+namespace Doctrine\ODM\CouchDB\Types\History;
 
 use Doctrine\ODM\CouchDB\Types\DateTimeType;
 
@@ -28,15 +28,23 @@ use Doctrine\ODM\CouchDB\Types\DateTimeType;
  */
 class HistoryDateTimeType extends DateTimeType
 {
-    public function convertToDatabaseValue($values)
+    /**
+     * @param \DateTime $value
+     *
+     * @return \DateTime
+     */
+    public function convertToDatabaseValue($value)
     {
-        foreach ($values as &$value) {
-            $value['validFrom'] = DateTimeType::convertPHPToDatabaseValue($value['validFrom']);
-            $value['value'] = parent::convertPHPToDatabaseValue($value['value']);
-            if (isset($value['validUntil'])) {
-                $value['validUntil'] = DateTimeType::convertPHPToDatabaseValue($value['validUntil']);
-            }
-        }
-        return (array) $values;
+        return $value;
+    }
+
+    /**
+     * @param \DateTime $value
+     *
+     * @return string
+     */
+    public function realConvertToDatabaseValue($value)
+    {
+        return parent::convertToDatabaseValue($value);
     }
 }
