@@ -2,9 +2,9 @@
 
 namespace Doctrine\ODM\CouchDB\Mapping;
 
-use Doctrine\Common\Persistence\Mapping\ClassMetadata AS IClassMetadata,
-    ReflectionClass,
-    ReflectionProperty;
+use Doctrine\Common\Persistence\Mapping\ClassMetadata as IClassMetadata;
+use Doctrine\Common\Persistence\Mapping\RuntimeReflectionService;
+use Doctrine\ODM\CouchDB\Types\Type;
 
 /**
  * Metadata class
@@ -52,9 +52,9 @@ class ClassMetadata implements IClassMetadata
     public $rootDocumentName;
 
     /**
-     * READ-ONLY: Is this entity in an inheritance hierachy?
+     * READ-ONLY: Is this entity in an inheritance hierarchy?
      */
-    public $inInheritanceHierachy = false;
+    public $inInheritanceHierarchy = false;
 
     /**
      * READ-ONLY: a list of all parent classes.
@@ -137,7 +137,7 @@ class ClassMetadata implements IClassMetadata
     public $isEmbeddedDocument = false;
 
     /**
-     * READ-ONLY: Wheather the document or embedded document is read-only and will be skipped in change-tracking.
+     * READ-ONLY: Whether the document or embedded document is read-only and will be skipped in change-tracking.
      *
      * This should be set to true for value objects, for example attachments. Replacing the reference with a new
      * value object will trigger an update.
@@ -189,14 +189,14 @@ class ClassMetadata implements IClassMetadata
     /**
      * The ReflectionClass instance of the mapped class.
      *
-     * @var ReflectionClass
+     * @var \ReflectionClass
      */
     public $reflClass;
 
     /**
      * The ReflectionProperty instances of the mapped class.
      *
-     * @var array
+     * @var \ReflectionProperty[]|array
      */
     public $reflFields = array();
 
@@ -223,6 +223,8 @@ class ClassMetadata implements IClassMetadata
      * Used to derive a class metadata of the current instance for a mapped child class.
      *
      * @param  ClassMetadata $child
+     *
+     * @throws \InvalidArgumentException
      */
     public function deriveChildMetadata($child)
     {
@@ -284,7 +286,7 @@ class ClassMetadata implements IClassMetadata
             'rootDocumentName',
         );
 
-        if ($this->inInheritanceHierachy) {
+        if ($this->inInheritanceHierarchy) {
             $serialized[] = 'inInheritanceHierachy';
         }
 
@@ -329,6 +331,8 @@ class ClassMetadata implements IClassMetadata
 
     /**
      * Restores some state that can not be serialized/unserialized.
+     *
+     * @param RunTimeReflectionService $reflService
      *
      * @return void
      */
@@ -397,13 +401,13 @@ class ClassMetadata implements IClassMetadata
     public function getReflectionClass()
     {
         if ( ! $this->reflClass) {
-            $this->reflClass = new ReflectionClass($this->name);
+            $this->reflClass = new \ReflectionClass($this->name);
         }
         return $this->reflClass;
     }
 
     /**
-     * Gets the ReflectionPropertys of the mapped class.
+     * Gets the ReflectionProperties of the mapped class.
      *
      * @return array An array of ReflectionProperty instances.
      */
@@ -478,6 +482,8 @@ class ClassMetadata implements IClassMetadata
      *
      * @param object $document
      * @param string $field
+     *
+     * @return mixed
      */
     public function getFieldValue($document, $field)
     {
@@ -501,6 +507,8 @@ class ClassMetadata implements IClassMetadata
      * Sets the mapped identifier field of this class.
      *
      * @param string $identifier
+     *
+     * @throws MappingException
      */
     public function setIdentifier($identifier)
     {
@@ -536,6 +544,8 @@ class ClassMetadata implements IClassMetadata
     /**
      * Checks whether the class has a (mapped) field with a certain name.
      *
+     * @param string $fieldName
+     *
      * @return boolean
      */
     public function hasField($fieldName)
@@ -546,7 +556,8 @@ class ClassMetadata implements IClassMetadata
     /**
      * Registers a custom repository class for the document class.
      *
-     * @param string $mapperClassName  The class name of the custom mapper.
+     * @param string $repositoryClassName
+     *
      */
     public function setCustomRepositoryClass($repositoryClassName)
     {
@@ -577,6 +588,8 @@ class ClassMetadata implements IClassMetadata
      * Set the field that will contain attachments of this document.
      *
      * @param string $fieldName
+     *
+     * @throws MappingException
      */
     public function mapAttachments($fieldName)
     {
@@ -646,6 +659,12 @@ class ClassMetadata implements IClassMetadata
         $this->jsonNames[$mapping['jsonName']] = $mapping['fieldName'];
     }
 
+    /**
+     * @param array $mapping
+     *
+     * @return array
+     * @throws MappingException
+     */
     protected function validateAndCompleteFieldMapping($mapping)
     {
         if ( ! isset($mapping['fieldName']) || !$mapping['fieldName']) {
@@ -661,6 +680,11 @@ class ClassMetadata implements IClassMetadata
         return $mapping;
     }
 
+    /**
+     * @param array $mapping
+     *
+     * @return array
+     */
     protected function validateAndCompleteReferenceMapping($mapping)
     {
         if (isset($mapping['targetDocument']) && $mapping['targetDocument'] && strpos($mapping['targetDocument'], '\\') === false && strlen($this->namespace)) {
@@ -669,6 +693,11 @@ class ClassMetadata implements IClassMetadata
         return $mapping;
     }
 
+    /**
+     * @param array $mapping
+     *
+     * @return array
+     */
     protected function validateAndCompleteAssociationMapping($mapping)
     {
         $mapping = $this->validateAndCompleteFieldMapping($mapping);
@@ -678,6 +707,9 @@ class ClassMetadata implements IClassMetadata
         return $mapping;
     }
 
+    /**
+     * @param array $mapping
+     */
     public function mapManyToOne($mapping)
     {
         $mapping = $this->validateAndCompleteAssociationMapping($mapping);
@@ -690,6 +722,9 @@ class ClassMetadata implements IClassMetadata
         $this->storeAssociationMapping($mapping);
     }
 
+    /**
+     * @param array $mapping
+     */
     public function mapManyToMany($mapping)
     {
         $mapping = $this->validateAndCompleteAssociationMapping($mapping);
@@ -700,6 +735,11 @@ class ClassMetadata implements IClassMetadata
         $this->storeAssociationMapping($mapping);
     }
 
+    /**
+     * @param array $mapping
+     *
+     * @return array
+     */
     private function checkAndStoreIndexMapping($mapping)
     {
         if (isset($mapping['indexed']) && $mapping['indexed']) {
@@ -710,6 +750,9 @@ class ClassMetadata implements IClassMetadata
         return $mapping;
     }
 
+    /**
+     * @param array $mapping
+     */
     private function storeAssociationMapping($mapping)
     {
         $this->associationsMappings[$mapping['fieldName']] = $mapping;
@@ -731,7 +774,10 @@ class ClassMetadata implements IClassMetadata
     /**
      * Gets the mapping of a field.
      *
-     * @param string $fieldName  The field name.
+     * @param string $fieldName The field name.
+     *
+     * @throws MappingException
+     *
      * @return array  The field mapping.
      */
     public function getFieldMapping($fieldName)
@@ -765,6 +811,9 @@ class ClassMetadata implements IClassMetadata
         return isset($this->associationsMappings[$fieldName]);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function isCollectionValuedAssociation($name)
     {
         // TODO: included @EmbedMany here also?
@@ -799,6 +848,9 @@ class ClassMetadata implements IClassMetadata
      * Returns the target class name of the given association.
      *
      * @param string $assocName
+     *
+     * @throws \InvalidArgumentException
+     *
      * @return string
      */
     public function getAssociationTargetClass($assocName)
@@ -825,31 +877,47 @@ class ClassMetadata implements IClassMetadata
         return isset($this->associationsMappings[$assocName]) && ! $this->associationsMappings[$assocName];
     }
 
+    /**
+     * @param $field
+     *
+     * @return bool
+     */
     public function isInheritedField($field)
     {
         return isset($this->fieldMappings[$field]['declared']);
     }
 
+    /**
+     * @param $field
+     *
+     * @return bool
+     */
     public function isInheritedAssociation($field)
     {
         return isset($this->associationsMappings[$field]['declared']);
     }
 
+    /**
+     * @param $classes
+     */
     public function setParentClasses($classes)
     {
-        $this->parentClasses         = $classes;
-        $this->inInheritanceHierachy = true;
+        $this->parentClasses = $classes;
+        $this->inInheritanceHierarchy = true;
         if (count($classes) > 0) {
             $this->rootDocumentName = array_pop($classes);
         }
     }
 
+    /**
+     * @throws MappingException
+     */
     public function markInheritanceRoot()
     {
         if ($this->parentClasses) {
             throw MappingException::invalidInheritanceRoot($this->name, $this->parentClasses);
         }
-        $this->inInheritanceHierachy = true;
+        $this->inInheritanceHierarchy = true;
     }
 
     /**
