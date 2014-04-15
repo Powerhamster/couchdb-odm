@@ -30,6 +30,7 @@ final class Event
     const postRemove = 'postRemove';
     const postUpdate = 'postUpdate';
     const postLoad = 'postLoad';
+    const modifyData = 'modifyData';
 
     private function __construct() {}
 }
