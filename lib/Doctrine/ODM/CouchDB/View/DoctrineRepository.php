@@ -32,6 +32,9 @@ use Doctrine\CouchDB\View\DesignDocument;
  */
 class DoctrineRepository implements DesignDocument
 {
+    /**
+     * @inheritdoc
+     */
     public function getData()
     {
         $mapRepositoryEqualConstraint = <<<'JS'
@@ -53,9 +56,7 @@ JS;
         $mapRepositoryTypeConstraint = <<<'JS'
 function (doc)
 {
-    if (doc.type
-        && doc.doctrine_metadata
-        && doc.doctrine_metadata.indexed) {
+    if (doc.type) {
         emit(doc.type, {"_id": doc._id} );
     }
 }

@@ -1,6 +1,7 @@
 <?php
 namespace Doctrine\Tests\ODM\CouchDB\Functional;
 
+use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\ODM\CouchDB\Migrations\DocumentMigration;
 
 class MigrationsTest extends \Doctrine\Tests\ODM\CouchDB\CouchDBFunctionalTestCase
@@ -30,7 +31,7 @@ class MigrationsTest extends \Doctrine\Tests\ODM\CouchDB\CouchDBFunctionalTestCa
 
 class TestMigration implements DocumentMigration
 {
-    public function migrate(array $data)
+    public function migrate(array $data, ClassMetadata $classMetadata)
     {
         $data['type'] = str_replace('\\', '.', __NAMESPACE__ . '\\MigrateDocument');
         $data['doctrine_metadata'] = array();

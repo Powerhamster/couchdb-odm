@@ -156,6 +156,10 @@ class EmbeddedDocumentSerializer
             if (isset($class->jsonNames[$jsonName])) {
                 $fieldName = $class->jsonNames[$jsonName];
                 if (isset($class->fieldMappings[$fieldName])) {
+                    if (isset($class->fieldMappings[$fieldName]['notSaved'])) {
+                        $fieldValue = null;
+                        continue;
+                    }
                     if ($jsonValue === null) {
                         $fieldValue = null;
                     } else if (isset($class->fieldMappings[$fieldName]['embedded'])) {
@@ -217,6 +221,9 @@ class EmbeddedDocumentSerializer
         $class = $this->metadataFactory->getMetadataFor(get_class($value));
         foreach ($class->reflFields as $fieldName => $fieldValue) {
             $fieldMapping = $class->fieldMappings[$fieldName];
+            if (isset($fieldMapping['notSaved'])) {
+                continue;
+            }
             $originalDataValue = isset($originalData[$fieldMapping['jsonName']])
                 ? $originalData[$fieldMapping['jsonName']]
                 : null;

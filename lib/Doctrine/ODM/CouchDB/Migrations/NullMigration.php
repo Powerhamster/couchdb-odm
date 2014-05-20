@@ -19,15 +19,17 @@
 
 namespace Doctrine\ODM\CouchDB\Migrations;
 
+use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+
 /**
  * Default migration that changes no document
  */
-class NullMigration
+class NullMigration implements DocumentMigration
 {
     /**
      * {@inheritDoc}
      */
-    public function migrate(array $data)
+    public function migrate(array $data, ClassMetadata $classMetadata)
     {
         return $data;
     }

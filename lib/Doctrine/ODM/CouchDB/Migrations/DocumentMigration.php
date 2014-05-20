@@ -19,6 +19,8 @@
 
 namespace Doctrine\ODM\CouchDB\Migrations;
 
+use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+
 /**
  * CouchDB documents can be migrated whenever they are loaded.
  *
@@ -35,7 +37,10 @@ interface DocumentMigration
      * This method has to return the original data, when no migration
      * needs to take place.
      *
+     * @param array                                              $data
+     * @param \Doctrine\Common\Persistence\Mapping\ClassMetadata $classMetadata
+     *
      * @return array
      */
-    public function migrate(array $data);
+    public function migrate(array $data, ClassMetadata $classMetadata);
 }

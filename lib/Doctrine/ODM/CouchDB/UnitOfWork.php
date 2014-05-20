@@ -175,7 +175,7 @@ class UnitOfWork
      */
     public function createDocument($documentName, $data, array &$hints = array())
     {
-        $data = $this->migrations->migrate($data);
+
 
         if (!$this->metadataResolver->canMapDocument($data)) {
             throw new \InvalidArgumentException(
@@ -186,6 +186,7 @@ class UnitOfWork
         $type = $this->metadataResolver->getDocumentType($data);
         $class = $this->dm->getClassMetadata($type);
 
+        $data = $this->migrations->migrate($data, $class);
         $documentState = array();
         $nonMappedData = array();
         $embeddedDocumentState = array();
