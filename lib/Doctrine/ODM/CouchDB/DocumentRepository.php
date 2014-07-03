@@ -131,7 +131,7 @@ class DocumentRepository implements ObjectRepository
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
     {
         if (count($criteria) == 1) {
-            foreach ($criteria AS $field => $value) {
+            foreach ($criteria as $field => $value) {
                 $query = $this->dm->createQuery('doctrine_repositories', 'equal_constraint')
                                   ->setKey(array($this->documentType, $field, $value))
                                   ->setIncludeDocs(true)
@@ -144,6 +144,18 @@ class DocumentRepository implements ObjectRepository
                 }
                 return $query->execute();
             }
+        } elseif (empty($criteria)) {
+            $query = $this->dm->createQuery('doctrine_repositories', 'type_constraint')
+                ->setKey($this->documentType)
+                ->setIncludeDocs(true)
+                ->toArray(true);
+            if ($limit) {
+                $query->setLimit($limit);
+            }
+            if ($offset) {
+                $query->setSkip($offset);
+            }
+            return $query->execute();
         } else {
             $ids = array();
             $num = 0;
